@@ -63,6 +63,19 @@ def main():
         action='store_true',
         default=False
     )
+    arg_parser.add_argument(
+        '-e',
+        '--element',
+        help='JSON element',
+        action='append'
+    )
+    arg_parser.add_argument(
+        '-d',
+        '--delimiter',
+        help='JSON element delimiter',
+        default=':'
+
+    )
     args = arg_parser.parse_args()
 
     host_alias = args.hostalias
@@ -81,11 +94,24 @@ def main():
         'content-type': "application/json"
     }
 
-    build_json_data = {"Name": host_alias, "HostName": host_name, "HostAddress": host_address, "State": host_state,"Info": host_output, "Timestamp": current_date} # Gather Required data for JSON
+    build_json_data = {"Name": host_alias,
+                       "HostName": host_name,
+                       "HostAddress": host_address,
+                       "State": host_state,
+                       "Info": host_output,
+                       "Timestamp": current_date} # Gather Required data for JSON
+
+    if args.element:
+        for element in args.element:
+            if args.test is True:
+                print "JSON element: {0}".format(element)
+            key, value = element.split(args.delimiter)
+            build_json_data[key] = value
+
     json_data = json.dumps(build_json_data) # Assemble JSON
 
     if args.test == True:
-        print "Test"
+        print "Dry-Run Testing"
         print "----------"
         print 'Arguments'
         print "----------"
