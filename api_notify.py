@@ -52,11 +52,11 @@ def main():
     args = arg_parser.parse_args()
 
     headers = {
-            'content-type': "application/json"
-        }
+        'content-type': "application/json"
+    }
 
     build_json_data = {}  # Gather Required data for JSON
-    
+
     url_details = urlparse(args.url)  # Convert URL into dic.
 
     if args.test:
@@ -65,7 +65,7 @@ def main():
         print "Server Variable = {0}".format(url_details.netloc)
         print "API Endpoint Variable = {0}".format(url_details.path)
 
-    # Test for API Key    
+    # Test for API Key
     if args.apikey:
         if args.test:
             print "API Key Variable = {0}".format(args.apikey)
@@ -83,22 +83,22 @@ def main():
         if args.password:
             if args.test:
                 print "Password = {0}".format(args.password)
-            auth64 = base64.encodestring('%s:%s' % (args.username, args.password)).replace('\n', '') # Convert Username and password to base64
+            auth64 = base64.encodestring('%s:%s' % (args.username, args.password)).replace('\n',
+                                                                                           '')  # Convert Username and password to base64
             if args.test:
                 print "Username Password Base64 = {0}".format(auth64)
             if args.apikey:
                 if args.test:
-                    print "Username Password Base 64 = {0}".format(upb64)
                     print "Multiple authentication methods provided, defaulting to API Key. Username and Password have been cleared"
                 del auth64
             if auth64:
                 headers = {
-                    'Authorization': "Basic {0}".format(upb64),
+                    'Authorization': "Basic {0}".format(auth64),
                     'content-type': "application/json"
                 }
                 if args.test:
                     print "Username and Password set, Using Basic Auth"
-    
+
     # Print Headers in Dryrun
     if args.test:
         print "Headers Variable = {0}".format(headers)
@@ -112,7 +112,7 @@ def main():
             build_json_data[key] = value
 
     json_data = json.dumps(build_json_data)  # Assemble JSON
-    
+
     # Determine if HTTPS or HTTP
     if url_details.scheme in ["https"]:
         if args.test:
@@ -122,7 +122,7 @@ def main():
         if args.test:
             print "Using HTTP"
         conn = httplib.HTTPConnection(url_details.netloc)  # Connect to HTTP Server
-    
+
     if not args.test:
         conn.request("POST", url_details.path, json_data, headers)  # Connect to endpoint
         res = conn.getresponse()  # Get Response from HTTP Server
@@ -130,7 +130,7 @@ def main():
         print(data.decode("utf-8"))  # Display the response from HTTP Server
         conn.close()  # Close Connection to HTTP Server
     else:
-        print: "Dryrun test tomplete. Please review for any errors."
+        print "Dryrun test tomplete. Please review for any errors."
 
 
 if __name__ == "__main__":
